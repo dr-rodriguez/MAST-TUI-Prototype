@@ -1,15 +1,10 @@
 <!--
 Sync Impact Report:
-- Version change: N/A -> 0.1.0 (Initial Draft)
-- List of modified principles (old title -> new title if renamed):
-  - [PRINCIPLE_1_NAME] -> I. Separation of Concerns (UI vs. Archive)
-  - [PRINCIPLE_2_NAME] -> II. Responsive & Fluid TUI
-  - [PRINCIPLE_3_NAME] -> III. Terminal State Safety (NON-NEGOTIABLE)
-  - [PRINCIPLE_4_NAME] -> IV. Visual Polish & Accessibility
-  - [PRINCIPLE_5_NAME] -> V. Modular Prototyping & TDD
+- Version change: 0.1.0 -> 0.2.0
+- List of modified principles (old title -> new title if renamed): None.
 - Added sections:
-  - Technical Stack & Core Knowledge
-  - Development Workflow & Validation
+  - VI. Scientific Clarity & Simplicity
+- Removed sections: None.
 - Templates requiring updates (✅ updated / ⚠ pending) with file paths:
   - ✅ .specify/templates/plan-template.md
   - ✅ .specify/templates/spec-template.md
@@ -41,6 +36,10 @@ Rationale: As a prototype for astronomers, clarity and ease of reading are as im
 Build modular UI components (e.g., Search Bar, Results Table) in isolation before integration. Verify `astroquery.mast` API calls through research before implementation.
 Rationale: Reducing complexity through modularity allows for faster iteration and easier debugging.
 
+### VI. Scientific Clarity & Simplicity
+Code MUST be written for readability by intermediate-level python-aware astronomers. Developers MUST prioritize explicit logic over "clever" or highly-abstracted patterns that obscure data flow.
+Rationale: As a tool for the astronomy community, accessibility for peer review and contribution by scientists is a non-negotiable requirement for long-term project health.
+
 ## Technical Stack & Core Knowledge
 
 - **Stack**: Python 3.12+, `blessed` for TUI, `astroquery.mast` for archive access, `astropy.table` for data management.
@@ -59,4 +58,4 @@ Rationale: Reducing complexity through modularity allows for faster iteration an
 - **Amendments**: Changes to principles require a version bump (Major/Minor) and documentation of rationale in the Sync Impact Report.
 - **Compliance**: All feature plans and task lists must be validated against these principles during the `Constitution Check` phase.
 
-**Version**: 0.1.0 | **Ratified**: 2026-04-02 | **Last Amended**: 2026-04-02
+**Version**: 0.2.0 | **Ratified**: 2026-04-02 | **Last Amended**: 2026-04-02

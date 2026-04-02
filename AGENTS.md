@@ -20,6 +20,7 @@ To create a fast, intuitive, and visually appealing terminal-based tool for astr
 2. **Responsiveness**: Use non-blocking input (`term.inkey(timeout=...)`) and consider asynchronous requests for network-heavy operations to keep the UI fluid.
 3. **Safety**: Use `blessed` context managers (`fullscreen`, `cbreak`, `hidden_cursor`) to ensure the terminal state is restored on exit or crash.
 4. **Visual Polish**: Leverage the `tui-design` skill to ensure the interface is modern, accessible, and high-contrast.
+5. **Scientific Clarity & Simplicity**: Code MUST be written for readability by intermediate-level python-aware astronomers. Prioritize explicit logic over "clever" or highly-abstracted patterns.
 
 ## Workflow for Agents
 - **Research**: When implementing new archive features, verify the `astroquery.mast` API calls first.
