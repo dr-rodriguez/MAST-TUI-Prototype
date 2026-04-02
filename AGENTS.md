@@ -27,7 +27,6 @@ To create a fast, intuitive, and visually appealing terminal-based tool for astr
 - **Validation**: Test UI interactions across different terminal sizes. Ensure error states (e.g., no search results, network errors) are handled gracefully.
 
 ## Important Files
-- `main.py`: Entry point for the application.
 - `.agents/skills/blessed/`: Specialized guidance for the TUI framework.
 - `pyproject.toml`: Dependency management and project configuration.
 
