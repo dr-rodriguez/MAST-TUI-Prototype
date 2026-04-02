@@ -209,3 +209,11 @@ __marimo__/
 # Additional ignores
 # Some of the skills come from skillsmp.com and are ignored from tracking
 .agents/skills/tui-design/
+.gemini/
+
+# Spec Kit extra files
+.specify/integrations/
+.specify/scripts/
+.specify/templates/
+.specify/integration.json
+.specify/init-options.json
