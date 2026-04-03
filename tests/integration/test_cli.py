@@ -7,7 +7,7 @@ from mast_tui.main import main
 class TestCLI(unittest.TestCase):
     """Basic integration/smoke tests for the CLI."""
 
-    @patch('mast_tui.main.Terminal')
+    @patch("mast_tui.main.Terminal")
     def test_main_loop_exits_on_escape(self, mock_terminal_class):
         """Verify that the main loop can start and exit on an escape key."""
         # Setup mock terminal
@@ -39,7 +39,7 @@ class TestCLI(unittest.TestCase):
         mock_term.cbreak.assert_called_once()
         mock_term.hidden_cursor.assert_called_once()
 
-    @patch('mast_tui.main.Terminal')
+    @patch("mast_tui.main.Terminal")
     def test_main_loop_resets_escape_on_other_key(self, mock_terminal_class):
         """Verify that any non-escape key resets the escape counter."""
         mock_term = MagicMock()
@@ -60,13 +60,14 @@ class TestCLI(unittest.TestCase):
             mock_escape_key,
             mock_other_key,
             mock_escape_key,
-            mock_escape_key
+            mock_escape_key,
         ]
 
         main()
 
         # Should have called inkey 4 times
         self.assertEqual(mock_term.inkey.call_count, 4)
+
 
 if __name__ == "__main__":
     unittest.main()

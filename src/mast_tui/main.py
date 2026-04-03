@@ -1,26 +1,97 @@
 import sys
+import time
+from enum import Enum, auto
 
 from blessed import Terminal
 
-from mast_tui.ui.layout import draw_prompt, draw_table, draw_title
+from mast_tui.ui.layout import (
+    draw_help,
+    draw_prompt,
+    draw_status_line,
+    draw_table,
+    draw_title,
+)
+
+
+class View(Enum):
+    MAIN = auto()
+    HELP = auto()
+
+
+class AppState:
+    def __init__(self):
+        self.view = View.MAIN
+        self.prompt_text = ""
+        self.last_main_content = []  # Placeholder for display buffer
+        self.status_text = "Press ? to see commands"
+        self.last_esc_time = 0
+        self.should_exit = False
+
+
+def process_input(val, state, term):
+    """Process a single keystroke and update the application state."""
+    if state.view == View.HELP:
+        if val.lower() == "q" or (val.is_sequence and val.name == "KEY_ESCAPE"):
+            state.view = View.MAIN
+            print(term.clear)
+        return
+
+    if val.is_sequence:
+        if val.name == "KEY_ESCAPE":
+            current_time = time.monotonic()
+            if current_time - state.last_esc_time < 0.5:
+                state.should_exit = True
+            else:
+                state.prompt_text = ""
+                state.last_esc_time = current_time
+        elif val.name == "KEY_BACKSPACE" or val.name == "KEY_DELETE":
+            state.prompt_text = state.prompt_text[:-1]
+        elif val.name == "KEY_ENTER":
+            command = state.prompt_text.strip().lower()
+            if command in ["/help", "?"]:
+                state.view = View.HELP
+                print(term.clear)
+            elif command == "/exit":
+                state.should_exit = True
+            elif command == "/clear":
+                state.last_main_content = []
+                print(term.clear)
+            state.prompt_text = ""
+    elif not val.is_sequence:
+        if val == "?":
+            state.view = View.HELP
+            print(term.clear)
+        else:
+            state.prompt_text += val
 
 
 def main():
     """Main entry point for the MAST TUI application."""
     term = Terminal()
+    state = AppState()
 
     # FR-006: Exit gracefully (handled by context manager + KeyboardInterrupt)
     try:
         # Principle III: Terminal State Safety (Context Managers)
+        # Use hidden_cursor() to avoid blinking/flicker as requested
         with term.fullscreen(), term.cbreak(), term.hidden_cursor():
             print(term.clear)
-            escape_count = 0
 
-            while True:
-                # FR-002, FR-004, FR-005: Rendering
+            while not state.should_exit:
+                # Rendering logic based on current view
                 draw_title(term)
-                draw_prompt(term)
-                draw_table(term)
+
+                if state.view == View.MAIN:
+                    draw_prompt(term, state)
+                    draw_table(term)
+                    state.status_text = "Press ? to see commands"
+                elif state.view == View.HELP:
+                    # US2: Help view rendering
+                    # We rely on the clear called during view transition to avoid flicker
+                    draw_help(term)
+                    state.status_text = "Esc or q to exit menu"
+
+                draw_status_line(term, state)
 
                 # US2: Basic terminal size check (80x24 minimum)
                 if term.width < 80 or term.height < 24:
@@ -28,21 +99,14 @@ def main():
                         f"Terminal too small: {term.width}x{term.height}. "
                         "Min 80x24 required."
                     )
-                    print(term.move_xy(0, term.height - 1) + term.red(msg))
+                    # Position it above status line if possible, or just print it
+                    print(term.move_xy(0, term.height - 2) + term.red(msg))
 
                 # Use inkey with a timeout for responsiveness (Principle II)
-                val = term.inkey(timeout=0.1)
+                val = term.inkey(timeout=0.05)
 
                 if val:
-                    # Although Ctrl+C is caught as KeyboardInterrupt,
-                    # we can also handle explicit escape keys here
-                    if val.is_sequence and val.name == "KEY_ESCAPE":
-                        escape_count += 1
-                        if escape_count >= 2:
-                            break
-                    else:
-                        # Reset if any other key is pressed
-                        escape_count = 0
+                    process_input(val, state, term)
 
     except KeyboardInterrupt:
         # Graceful exit on Ctrl+C is handled by context managers' __exit__
@@ -50,6 +114,7 @@ def main():
     except Exception as e:
         print(f"An error occurred: {e}", file=sys.stderr)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
