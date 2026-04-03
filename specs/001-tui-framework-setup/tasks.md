@@ -15,9 +15,9 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure: `src/mast_tui/ui/`, `tests/integration/`, `tests/unit/`
-- [ ] T002 Initialize `pyproject.toml` with `blessed`, `astropy`, `astroquery` and script entry point `mast-tui = "mast_tui.main:main"`
-- [ ] T003 [P] Configure `pytest` and basic linting in `pyproject.toml`
+- [x] T001 Create project structure: `src/mast_tui/ui/`, `tests/integration/`, `tests/unit/`
+- [x] T002 Initialize `pyproject.toml` with `blessed`, `astropy`, `astroquery` and script entry point `mast-tui = "mast_tui.main:main"`
+- [x] T003 [P] Configure `pytest` and basic linting in `pyproject.toml`
 
 ---
 
@@ -27,8 +27,8 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Implement `blessed` terminal initialization with context managers (`fullscreen`, `cbreak`, `hidden_cursor`) in `src/mast_tui/main.py`
-- [ ] T005 Implement basic main loop with `KeyboardInterrupt` handling for Ctrl+C exit in `src/mast_tui/main.py`
+- [x] T004 Implement `blessed` terminal initialization with context managers (`fullscreen`, `cbreak`, `hidden_cursor`) in `src/mast_tui/main.py`
+- [x] T005 Implement basic main loop with `KeyboardInterrupt` handling for Ctrl+C exit in `src/mast_tui/main.py`
 
 **Checkpoint**: Foundation ready - terminal state safety and graceful exit are verified.
 
@@ -42,12 +42,12 @@
 
 ### Tests for User Story 1
 
-- [ ] T006 [P] [US1] Create integration test for CLI startup and exit in `tests/integration/test_cli.py`
+- [x] T006 [P] [US1] Create integration test for CLI startup and exit in `tests/integration/test_cli.py`
 
 ### Implementation for User Story 1
 
-- [ ] T007 [P] [US1] Implement `draw_title` function with `term.black_on_blue` in `src/mast_tui/ui/layout.py`
-- [ ] T008 [US1] Integrate `draw_title` call into the main loop in `src/mast_tui/main.py`
+- [x] T007 [P] [US1] Implement `draw_title` function with `term.black_on_blue` in `src/mast_tui/ui/layout.py`
+- [x] T008 [US1] Integrate `draw_title` call into the main loop in `src/mast_tui/main.py`
 
 **Checkpoint**: MVP is functional. The application can be launched, displays the title, and exits on Ctrl+C.
 
@@ -61,14 +61,14 @@
 
 ### Tests for User Story 2
 
-- [ ] T009 [P] [US2] Create unit tests for UI component positioning in `tests/unit/test_ui.py`
+- [x] T009 [P] [US2] Create unit tests for UI component positioning in `tests/unit/test_ui.py`
 
 ### Implementation for User Story 2
 
-- [ ] T010 [P] [US2] Implement `draw_prompt` function in `src/mast_tui/ui/layout.py`
-- [ ] T011 [P] [US2] Implement `draw_table` function with static placeholder data in `src/mast_tui/ui/layout.py`
-- [ ] T012 [US2] Update main loop in `src/mast_tui/main.py` to call `draw_prompt` and `draw_table`
-- [ ] T013 [US2] Add basic terminal size check to ensure 80x24 minimum in `src/mast_tui/main.py`
+- [x] T010 [P] [US2] Implement `draw_prompt` function in `src/mast_tui/ui/layout.py`
+- [x] T011 [P] [US2] Implement `draw_table` function with static placeholder data in `src/mast_tui/ui/layout.py`
+- [x] T012 [US2] Update main loop in `src/mast_tui/main.py` to call `draw_prompt` and `draw_table`
+- [x] T013 [US2] Add basic terminal size check to ensure 80x24 minimum in `src/mast_tui/main.py`
 
 **Checkpoint**: UI layout is complete with placeholders for input and data.
 
@@ -78,9 +78,9 @@
 
 **Purpose**: Final documentation and verification
 
-- [ ] T014 [P] Update `README.md` with installation and usage instructions
-- [ ] T015 Code cleanup and verification of PEP 8 compliance
-- [ ] T016 Run `quickstart.md` validation to ensure all steps work as documented
+- [x] T014 [P] Update `README.md` with installation and usage instructions
+- [x] T015 Code cleanup and verification of PEP 8 compliance
+- [x] T016 Run `quickstart.md` validation to ensure all steps work as documented
 
 ---
 
