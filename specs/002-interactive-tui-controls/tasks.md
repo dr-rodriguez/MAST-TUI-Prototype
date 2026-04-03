@@ -17,8 +17,8 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create test structure in `tests/integration/test_interactive.py` and `tests/unit/test_ui_components.py`
-- [ ] T002 [P] Update `src/mast_tui/__init__.py` to expose necessary UI components or metadata
+- [x] T001 Create test structure in `tests/integration/test_interactive.py` and `tests/unit/test_ui_components.py`
+- [x] T002 [P] Update `src/mast_tui/__init__.py` to expose necessary UI components or metadata
 
 ---
 
@@ -28,9 +28,9 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Implement `AppState` class or data structure in `src/mast_tui/main.py`
-- [ ] T004 Implement non-blocking main loop using `term.inkey(timeout=0.05)` in `src/mast_tui/main.py`
-- [ ] T005 [P] Setup `View` enum (`MAIN`, `HELP`) and initial application state in `src/mast_tui/main.py`
+- [x] T003 Implement `AppState` class or data structure in `src/mast_tui/main.py`
+- [x] T004 Implement non-blocking main loop using `term.inkey(timeout=0.05)` in `src/mast_tui/main.py`
+- [x] T005 [P] Setup `View` enum (`MAIN`, `HELP`) and initial application state in `src/mast_tui/main.py`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -44,15 +44,15 @@
 
 ### Tests for User Story 1 (REQUIRED) ⚠️
 
-- [ ] T006 [P] [US1] Unit tests for status line and prompt rendering in `tests/unit/test_ui_components.py`
+- [x] T006 [P] [US1] Unit tests for status line and prompt rendering in `tests/unit/test_ui_components.py`
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Implement status line rendering at `term.height - 1` in `src/mast_tui/ui/layout.py`
-- [ ] T008 [US1] Implement gray prompt rendering with cursor positioning in `src/mast_tui/ui/layout.py`
-- [ ] T009 [US1] Handle character input to update `AppState.prompt_text` in `src/mast_tui/main.py`
-- [ ] T010 [US1] Handle `Backspace` and input buffer management in `src/mast_tui/main.py`
-- [ ] T011 [US1] Integrate status line and prompt into the main rendering loop of `src/mast_tui/main.py`
+- [x] T007 [US1] Implement status line rendering at `term.height - 1` in `src/mast_tui/ui/layout.py`
+- [x] T008 [US1] Implement gray prompt rendering with cursor positioning in `src/mast_tui/ui/layout.py`
+- [x] T009 [US1] Handle character input to update `AppState.prompt_text` in `src/mast_tui/main.py`
+- [x] T010 [US1] Handle `Backspace` and input buffer management in `src/mast_tui/main.py`
+- [x] T011 [US1] Integrate status line and prompt into the main rendering loop of `src/mast_tui/main.py`
 
 **Checkpoint**: At this point, the persistent UI elements should be visible and interactive.
 
@@ -66,15 +66,15 @@
 
 ### Tests for User Story 2 (REQUIRED) ⚠️
 
-- [ ] T012 [P] [US2] Integration tests for help menu navigation in `tests/integration/test_interactive.py`
+- [x] T012 [P] [US2] Integration tests for help menu navigation in `tests/integration/test_interactive.py`
 
 ### Implementation for User Story 2
 
-- [ ] T013 [US2] Implement help menu content rendering in `src/mast_tui/ui/layout.py`
-- [ ] T014 [US2] Update `main.py` to handle `?` and `/help` to switch `view` to `HELP`
-- [ ] T015 [US2] Implement display state saving (`last_main_content`) when toggling `HELP` view in `src/mast_tui/main.py`
-- [ ] T016 [US2] Update status line text for `HELP` view in `src/mast_tui/ui/layout.py`
-- [ ] T017 [US2] Implement `Esc` or `q` logic in `main.py` to restore `MAIN` view and previous content
+- [x] T013 [US2] Implement help menu content rendering in `src/mast_tui/ui/layout.py`
+- [x] T014 [US2] Update `main.py` to handle `?` and `/help` to switch `view` to `HELP`
+- [x] T015 [US2] Implement display state saving (`last_main_content`) when toggling `HELP` view in `src/mast_tui/main.py`
+- [x] T016 [US2] Update status line text for `HELP` view in `src/mast_tui/ui/layout.py`
+- [x] T017 [US2] Implement `Esc` or `q` logic in `main.py` to restore `MAIN` view and previous content
 
 **Checkpoint**: Help menu should be functional with full state restoration.
 
@@ -88,14 +88,14 @@
 
 ### Tests for User Story 3 (REQUIRED) ⚠️
 
-- [ ] T018 [P] [US3] Unit tests for command processing logic in `tests/unit/test_ui_components.py`
+- [x] T018 [P] [US3] Unit tests for command processing logic in `tests/unit/test_ui_components.py`
 
 ### Implementation for User Story 3
 
-- [ ] T019 [US3] Implement `/clear` command logic to reset `last_main_content` in `src/mast_tui/main.py`
-- [ ] T020 [US3] Implement single `Esc` logic to clear `prompt_text` in `src/mast_tui/main.py`
-- [ ] T021 [US3] Implement `Esc-Esc` (rapid double-tap < 500ms) detection in `src/mast_tui/main.py`
-- [ ] T022 [US3] Implement `/exit` command and termination logic in `src/mast_tui/main.py`
+- [x] T019 [US3] Implement `/clear` command logic to reset `last_main_content` in `src/mast_tui/main.py`
+- [x] T020 [US3] Implement single `Esc` logic to clear `prompt_text` in `src/mast_tui/main.py`
+- [x] T021 [US3] Implement `Esc-Esc` (rapid double-tap < 500ms) detection in `src/mast_tui/main.py`
+- [x] T022 [US3] Implement `/exit` command and termination logic in `src/mast_tui/main.py`
 
 **Checkpoint**: All system commands and exit paths should be functional.
 
@@ -105,9 +105,9 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T023 Handle terminal resizing (SIGWINCH) to ensure status line/prompt stay correctly positioned in `src/mast_tui/main.py`
-- [ ] T024 [P] Update `GEMINI.md` to reflect new feature completion and interaction guidelines
-- [ ] T025 Run `quickstart.md` validation checklist
+- [x] T023 Handle terminal resizing (SIGWINCH) to ensure status line/prompt stay correctly positioned in `src/mast_tui/main.py`
+- [x] T024 [P] Update `GEMINI.md` to reflect new feature completion and interaction guidelines
+- [x] T025 Run `quickstart.md` validation checklist
 
 ---
 

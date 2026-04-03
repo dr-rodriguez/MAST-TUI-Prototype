@@ -40,7 +40,7 @@ tests/
 - **Readability**: Prioritize explicit logic for scientific peer review.
 
 ## Recent Changes
-- 002-interactive-tui-controls: Added Python 3.12+ + `blessed`
+- 002-interactive-tui-controls: Added interactive command prompt with gray background, persistent status line, help menu navigation, and system commands (/clear, /exit).
 
 - **001-tui-framework-setup**: Added fundamental TUI framework with `blessed` initialization, title, prompt, and placeholder table.
 
