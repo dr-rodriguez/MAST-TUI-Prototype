@@ -86,10 +86,8 @@ def main():
                     draw_table(term)
                     state.status_text = "Press ? to see commands"
                 elif state.view == View.HELP:
-                    # Clear area between prompt and status for help menu
-                    # For simplicity, we just redraw everything
-                    print(term.clear)
-                    draw_title(term)
+                    # US2: Help view rendering
+                    # We rely on the clear called during view transition to avoid flicker
                     draw_help(term)
                     state.status_text = "Esc or q to exit menu"
 
