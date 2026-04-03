@@ -4,8 +4,13 @@ from enum import Enum, auto
 
 from blessed import Terminal
 
-from mast_tui.ui.layout import (draw_help, draw_prompt, draw_status_line,
-                                draw_table, draw_title)
+from mast_tui.ui.layout import (
+    draw_help,
+    draw_prompt,
+    draw_status_line,
+    draw_table,
+    draw_title,
+)
 
 
 class View(Enum):
@@ -26,7 +31,7 @@ class AppState:
 def process_input(val, state, term):
     """Process a single keystroke and update the application state."""
     if state.view == View.HELP:
-        if val.lower() == 'q' or (val.is_sequence and val.name == "KEY_ESCAPE"):
+        if val.lower() == "q" or (val.is_sequence and val.name == "KEY_ESCAPE"):
             state.view = View.MAIN
             print(term.clear)
         return
@@ -68,14 +73,14 @@ def main():
     # FR-006: Exit gracefully (handled by context manager + KeyboardInterrupt)
     try:
         # Principle III: Terminal State Safety (Context Managers)
-        # We want a blinking cursor in the prompt, so we DON'T use hidden_cursor()
-        with term.fullscreen(), term.cbreak():
+        # Use hidden_cursor() to avoid blinking/flicker as requested
+        with term.fullscreen(), term.cbreak(), term.hidden_cursor():
             print(term.clear)
 
             while not state.should_exit:
                 # Rendering logic based on current view
                 draw_title(term)
-                
+
                 if state.view == View.MAIN:
                     draw_prompt(term, state)
                     draw_table(term)
@@ -87,7 +92,7 @@ def main():
                     draw_title(term)
                     draw_help(term)
                     state.status_text = "Esc or q to exit menu"
-                
+
                 draw_status_line(term, state)
 
                 # US2: Basic terminal size check (80x24 minimum)
@@ -111,6 +116,7 @@ def main():
     except Exception as e:
         print(f"An error occurred: {e}", file=sys.stderr)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
