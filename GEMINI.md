@@ -1,8 +1,10 @@
-# MAST TUI Prototype Development Guidelines
+﻿# MAST TUI Prototype Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-02
+Auto-generated from all feature plans. Last updated: 2026-04-03
 
 ## Active Technologies
+- Python 3.12+ + `blessed` (002-interactive-tui-controls)
+- In-memory "Display State Buffer" (002-interactive-tui-controls)
 
 - **Language**: Python 3.12+
 - **TUI Framework**: `blessed`
@@ -38,6 +40,7 @@ tests/
 - **Readability**: Prioritize explicit logic for scientific peer review.
 
 ## Recent Changes
+- 002-interactive-tui-controls: Added Python 3.12+ + `blessed`
 
 - **001-tui-framework-setup**: Added fundamental TUI framework with `blessed` initialization, title, prompt, and placeholder table.
 
