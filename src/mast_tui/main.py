@@ -119,6 +119,12 @@ def process_input(val, state, term):
                     state.query_thread.start()
 
             state.prompt_text = ""
+    elif not val.is_sequence:
+        if val == "?":
+            state.view = View.HELP
+            print(term.clear)
+        else:
+            state.prompt_text += val
 
 
 def main():
