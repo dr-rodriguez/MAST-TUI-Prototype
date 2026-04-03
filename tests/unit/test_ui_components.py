@@ -44,7 +44,9 @@ def test_process_input_backspace(mock_term):
 def test_process_input_enter_help(mock_term):
     state = AppState()
     state.prompt_text = "/help"
-    process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    process_input(
+        MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term
+    )
     assert state.view == View.HELP
     assert state.prompt_text == ""
 
@@ -52,9 +54,10 @@ def test_process_input_enter_help(mock_term):
 def test_process_input_exit(mock_term):
     state = AppState()
     state.prompt_text = "/exit"
-    process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    process_input(
+        MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term
+    )
     assert state.should_exit is True
-
 
 
 def test_draw_title(mock_term):
