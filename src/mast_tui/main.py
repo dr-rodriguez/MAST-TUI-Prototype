@@ -68,8 +68,8 @@ def main():
     # FR-006: Exit gracefully (handled by context manager + KeyboardInterrupt)
     try:
         # Principle III: Terminal State Safety (Context Managers)
-        # Use normal_cursor() because we want a blinking cursor in the prompt
-        with term.fullscreen(), term.cbreak(), term.normal_cursor():
+        # We want a blinking cursor in the prompt, so we DON'T use hidden_cursor()
+        with term.fullscreen(), term.cbreak():
             print(term.clear)
 
             while not state.should_exit:
