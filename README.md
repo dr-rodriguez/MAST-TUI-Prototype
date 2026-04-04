@@ -17,7 +17,21 @@ Run the TUI using the following command:
 ```bash
 mast-tui
 ```
-Press **Ctrl+C** or **ESC** to exit.
+
+### Commands
+Within the application, you can type the following commands into the prompt:
+- `/help` or `?`: Display the help menu.
+- `/clear`: Clear current search results and reset the display.
+- `/exit`: Exit the application.
+- `<object name>`: Perform a search for an astronomical object (e.g., `M101`, `K2-18b`).
+
+### Keyboard Shortcuts
+- **Enter**: Submit the current command or search.
+- **Up / Down**: Scroll vertically through search results.
+- **Left / Right**: Scroll horizontally through search results.
+- **ESC** (twice quickly): Exit the application.
+- **ESC** (once): Clear the current input prompt.
+- **q** or **ESC**: Exit the help menu (when active).
 
 ## Development
 Run tests using `pytest`:
