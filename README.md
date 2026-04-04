@@ -7,10 +7,7 @@ A Terminal User Interface (TUI) prototype for interacting with the MAST archive.
 
 ## Installation
 1. Clone the repository.
-2. Install in editable mode:
-   ```bash
-   pip install -e .
-   ```
+2. Install using `uv sync`
 
 ## Usage
 Run the TUI using the following command:
@@ -24,12 +21,12 @@ Within the application, you can type the following commands into the prompt:
 - `/clear`: Clear current search results and reset the display.
 - `/exit`: Exit the application.
 - `<object name>`: Perform a search for an astronomical object (e.g., `M101`, `K2-18b`).
+- `/advanced`: Search using the advanced search form.
 
 ### Keyboard Shortcuts
 - **Enter**: Submit the current command or search.
 - **Up / Down**: Scroll vertically through search results.
 - **Left / Right**: Scroll horizontally through search results.
-- **ESC** (twice quickly): Exit the application.
 - **ESC** (once): Clear the current input prompt.
 - **q** or **ESC**: Exit the help menu (when active).
 
