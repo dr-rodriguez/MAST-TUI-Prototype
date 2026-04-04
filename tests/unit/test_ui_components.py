@@ -91,7 +91,7 @@ def test_draw_status_line(mock_term):
 
 def test_advanced_form_init():
     form = AdvancedSearchForm()
-    assert len(form.fields) == 4
+    assert len(form.fields) == 15
     assert form.fields[0].is_focused is True
     assert form.focused_index == 0
 
