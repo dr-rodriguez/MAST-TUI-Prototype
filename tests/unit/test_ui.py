@@ -47,6 +47,22 @@ class TestUI(unittest.TestCase):
         # Table starts at y=2 via render_table
         self.term.move_xy.assert_any_call(0, 2)
 
+    @patch("builtins.print")
+    def test_render_table_end_marker(self, mock_print):
+        """Verify that a horizontal line is shown at the end of the table."""
+        # viewport_h = 24 - 2 - 2 = 20
+        # max_rows = 20 - 2 = 18
+        state = MagicMock()
+        state.results = Table({'col1': list(range(10))}) # 10 rows
+        state.scroll_x = 0
+        state.scroll_y = 0
+        draw_table(self.term, state)
+        
+        # End of table line should be at y = start_y + 2 + num_rows = 2 + 2 + 10 = 14
+        self.term.move_xy.assert_any_call(0, 14)
+        # It should also clear remaining rows up to y=21 (start_y + viewport_h - 1 = 2 + 20 - 1)
+        self.term.move_xy.assert_any_call(0, 21)
+
 
 if __name__ == "__main__":
     unittest.main()

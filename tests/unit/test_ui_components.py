@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from astropy.table import Table
 
 from mast_tui.main import AppState, View, process_input
 from mast_tui.ui.form import AdvancedSearchForm
@@ -134,6 +135,26 @@ def test_advanced_form_editing(mock_term):
     form.process_input(key_enter, state, mock_term)
     assert form.fields[0].is_editing is False
     assert form.fields[0].value == "HST"
+
+
+def test_process_input_scroll_limit(mock_term):
+    state = AppState()
+    # Mocking a table with 100 rows
+    state.results = Table({'col1': list(range(100))})
+    
+    # term.height is 24
+    # max_rows = 24 - 6 = 18
+    # max_scroll_y = 100 - 18 = 82
+    state.scroll_y = 81
+    
+    # Scroll down once
+    val_down = MockKeystroke("", is_sequence=True, name="KEY_DOWN")
+    process_input(val_down, state, mock_term)
+    assert state.scroll_y == 82
+    
+    # Scroll down again - should be limited to 82
+    process_input(val_down, state, mock_term)
+    assert state.scroll_y == 82
 
 
 def test_advanced_form_clear(mock_term):

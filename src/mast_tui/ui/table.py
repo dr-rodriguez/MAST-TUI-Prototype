@@ -77,6 +77,7 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
 
     secondary_color = term.color_rgb(255, 194, 62)
 
+    last_row_idx = 0
     for i, row in enumerate(visible_rows):
         # Convert row to a single string with dynamic widths
         row_parts = []
@@ -89,10 +90,30 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
 
         # Check if EXCLUSIVE_ACCESS
         is_exclusive = (
-            'dataRights' in headers and
-            str(row['dataRights']).strip() == 'EXCLUSIVE_ACCESS'
+            'data_rights' in headers and
+            str(row['data_rights']).strip() == 'EXCLUSIVE_ACCESS'
         )
         if is_exclusive:
             print(term.move_xy(0, start_y + 2 + i) + secondary_color(visible_row_str))
         else:
             print(term.move_xy(0, start_y + 2 + i) + visible_row_str)
+        last_row_idx = i
+
+    # 3. Clear remaining viewport rows if we have reached the end of the table
+    # or show end-of-table line.
+    current_y = start_y + 2 + len(visible_rows)
+
+    # If we reached the end of the table (no more rows to show)
+    if scroll_y + len(visible_rows) >= len(table):
+        # Draw end-of-table line if there is room
+        if current_y < start_y + viewport_h:
+            end_line = "—" * term.width
+            # tertiary color (#a6cdda)
+            tertiary = term.color_rgb(166, 205, 218)
+            print(term.move_xy(0, current_y) + tertiary(end_line))
+            current_y += 1
+
+    # Clear anything remaining in the viewport
+    while current_y < start_y + viewport_h:
+        print(term.move_xy(0, current_y) + " " * term.width)
+        current_y += 1
