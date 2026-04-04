@@ -18,7 +18,7 @@ class TableWidget:
 
         headers = table.colnames
         widths = []
-        
+
         # We sample the first 100 rows for performance on very large tables
         # while always including the headers.
         sample_size = min(len(table), 100)
@@ -30,7 +30,7 @@ class TableWidget:
             # Data width in sample
             for val in sample[col]:
                 max_w = max(max_w, len(str(val)))
-            
+
             # Add some padding
             widths.append(max_w + 2)
 
@@ -60,7 +60,7 @@ class TableWidget:
 
         headers = table.colnames
         widths = self._get_column_widths(table)
-        
+
         viewport_h = self.term.height - start_y - 1  # -1 for status line
         viewport_w = self.term.width
 
@@ -69,7 +69,7 @@ class TableWidget:
         for h, w in zip(headers, widths):
             header_parts.append(f"{str(h):<{w}}")
         header_line = " | ".join(header_parts)
-        
+
         # Slicing the line for horizontal scroll
         visible_header = header_line[scroll_x : scroll_x + viewport_w]
         print(self.term.move_xy(0, start_y) + self.term.bold(visible_header))
@@ -86,7 +86,7 @@ class TableWidget:
             for cell, w in zip(row, widths):
                 row_parts.append(f"{str(cell):<{w}}")
             row_line = " | ".join(row_parts)
-            
+
             # Slicing the row string for horizontal scroll
             visible_row_str = row_line[scroll_x : scroll_x + viewport_w]
             print(self.term.move_xy(0, start_y + 2 + i) + visible_row_str)
