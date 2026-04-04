@@ -68,17 +68,18 @@ def test_process_input_exit(mock_term):
 
 def test_draw_title(mock_term):
     draw_title(mock_term)
-    mock_term.move_xy.assert_called_with(0, 0)
-    mock_term.black_on_blue.assert_called()
+    mock_term.move_xy.assert_called_with(0, 1) # last call is for visual hook
+    mock_term.move_xy.assert_any_call(0, 0)
+    mock_term.on_color_rgb.assert_called()
 
 
 def test_draw_prompt(mock_term):
     state = AppState()
     state.prompt_text = "test"
     draw_prompt(mock_term, state)
-    mock_term.move_xy.assert_any_call(0, 1)
+    mock_term.move_xy.assert_any_call(0, 22)
     # Check that it positions the cursor
-    mock_term.move_xy.assert_any_call(9 + 4, 1)
+    mock_term.move_xy.assert_any_call(14, 22)
 
 
 def test_draw_status_line(mock_term):
@@ -86,7 +87,7 @@ def test_draw_status_line(mock_term):
     state.status_text = "Status Message"
     draw_status_line(mock_term, state)
     mock_term.move_xy.assert_called_with(0, 23)
-    mock_term.reverse.assert_called()
+    mock_term.on_color_rgb.assert_called()
 
 
 def test_advanced_form_init():
