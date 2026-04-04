@@ -120,7 +120,14 @@ def process_input(val, state, term):
 
             state.prompt_text = ""
     elif not val.is_sequence:
-        if val == "?":
+        if val == "\x1b":  # ESC key character
+            current_time = time.monotonic()
+            if current_time - state.last_esc_time < 0.5:
+                state.should_exit = True
+            else:
+                state.prompt_text = ""
+                state.last_esc_time = current_time
+        elif val == "?":
             state.view = View.HELP
             print(term.clear)
         else:
