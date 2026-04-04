@@ -6,7 +6,9 @@ from enum import Enum, auto
 from blessed import Terminal
 
 from mast_tui.archive import MastClient
+from mast_tui.ui.form import AdvancedSearchForm
 from mast_tui.ui.layout import (
+    draw_advanced_form,
     draw_help,
     draw_prompt,
     draw_status_line,
@@ -19,6 +21,7 @@ from mast_tui.ui.layout import (
 class View(Enum):
     MAIN = auto()
     HELP = auto()
+    ADVANCED = auto()
 
 
 class TableStatus(Enum):
@@ -40,6 +43,7 @@ class AppState:
         self.status_text = "Press ? to see commands"
         self.last_esc_time = 0
         self.should_exit = False
+        self.advanced_form = None
 
 
 def perform_search(state, object_name):
@@ -56,12 +60,49 @@ def perform_search(state, object_name):
         state.error_msg = str(e)
 
 
+def perform_advanced_search(state, filters):
+    """Target function for the advanced search thread."""
+    client = MastClient()
+    try:
+        results = client.query_criteria(**filters)
+        state.results = results
+        state.table_status = TableStatus.IDLE
+        state.scroll_x = 0
+        state.scroll_y = 0
+    except Exception as e:
+        state.table_status = TableStatus.ERROR
+        state.error_msg = str(e)
+
+
 def process_input(val, state, term):
     """Process a single keystroke and update the application state."""
     if state.view == View.HELP:
         if val.lower() == "q" or (val.is_sequence and val.name == "KEY_ESCAPE"):
             state.view = View.MAIN
             print(term.clear)
+        return
+
+    if state.view == View.ADVANCED:
+        action = state.advanced_form.process_input(val, state, term)
+        if action == "EXIT":
+            state.view = View.MAIN
+            print(term.clear)
+        elif action == "SEARCH":
+            filters = state.advanced_form.get_filters()
+            if filters:
+                state.view = View.MAIN
+                state.table_status = TableStatus.SEARCHING
+                state.results = None
+                state.error_msg = None
+                print(term.clear)
+                state.query_thread = threading.Thread(
+                    target=perform_advanced_search, args=(state, filters), daemon=True
+                )
+                state.query_thread.start()
+            else:
+                state.status_text = "Please enter at least one search criterion."
+        elif action == "CLEAR":
+            state.status_text = "Form cleared."
         return
 
     if val.is_sequence:
@@ -99,6 +140,10 @@ def process_input(val, state, term):
 
             if command.lower() in ["/help", "?"]:
                 state.view = View.HELP
+                print(term.clear)
+            elif command.lower() == "/advanced":
+                state.view = View.ADVANCED
+                state.advanced_form = AdvancedSearchForm()
                 print(term.clear)
             elif command.lower() == "/exit":
                 state.should_exit = True
@@ -178,6 +223,9 @@ def main():
                     # We rely on the clear called during view transition to avoid flicker
                     draw_help(term)
                     state.status_text = "Esc or q to exit menu"
+                elif state.view == View.ADVANCED:
+                    draw_advanced_form(term, state)
+                    state.status_text = "Arrows: Navigate | Enter: Edit | Ctrl+S: Search | Esc: Exit"
 
                 draw_status_line(term, state)
 

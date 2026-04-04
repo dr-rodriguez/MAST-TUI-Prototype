@@ -16,3 +16,17 @@ class MastClient:
             An astropy.table.Table of observations.
         """
         return Observations.query_object(object_name, radius=radius)
+
+    def query_criteria(self, **filters):
+        """
+        Query MAST for observations based on specific criteria.
+
+        Args:
+            **filters: Keyword arguments for query_criteria (e.g., obs_collection='HST').
+
+        Returns:
+            An astropy.table.Table of observations.
+        """
+        # Remove empty filters to avoid issues with query_criteria
+        active_filters = {k: v for k, v in filters.items() if v}
+        return Observations.query_criteria(**active_filters)

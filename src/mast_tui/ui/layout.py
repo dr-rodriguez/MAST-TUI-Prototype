@@ -85,3 +85,9 @@ def draw_help(term: Terminal):
     start_y = 3
     for i, line in enumerate(help_content):
         print(term.move_xy(0, start_y + i) + line)
+
+
+def draw_advanced_form(term: Terminal, state):
+    """Draw the advanced search form."""
+    if state.advanced_form:
+        state.advanced_form.render(term)

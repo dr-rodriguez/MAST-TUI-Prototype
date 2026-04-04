@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from mast_tui.main import AppState, View, process_input
+from mast_tui.ui.form import AdvancedSearchForm, FormField
 from mast_tui.ui.layout import draw_prompt, draw_status_line, draw_title
 
 
@@ -23,6 +24,11 @@ def mock_term():
     term.black_on_blue.side_effect = lambda x: f"BB({x})"
     term.on_color.return_value = lambda x: f"BG({x})"
     term.reverse.side_effect = lambda x: f"RV({x})"
+    term.bold.side_effect = lambda x: f"B({x})"
+    term.black_on_cyan.side_effect = lambda x: f"BC({x})"
+    term.black_on_yellow.side_effect = lambda x: f"BY({x})"
+    term.italic.side_effect = lambda x: f"I({x})"
+    term.color.return_value = lambda x: f"C({x})"
     return term
 
 
@@ -81,3 +87,55 @@ def test_draw_status_line(mock_term):
     draw_status_line(mock_term, state)
     mock_term.move_xy.assert_called_with(0, 23)
     mock_term.reverse.assert_called()
+
+
+def test_advanced_form_init():
+    form = AdvancedSearchForm()
+    assert len(form.fields) == 4
+    assert form.fields[0].is_focused is True
+    assert form.focused_index == 0
+
+
+def test_advanced_form_navigation(mock_term):
+    form = AdvancedSearchForm()
+    state = AppState()
+    
+    # Move down
+    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_DOWN"), state, mock_term)
+    assert form.focused_index == 1
+    assert form.fields[0].is_focused is False
+    assert form.fields[1].is_focused is True
+    
+    # Move up (back to 0)
+    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_UP"), state, mock_term)
+    assert form.focused_index == 0
+    assert form.fields[0].is_focused is True
+
+
+def test_advanced_form_editing(mock_term):
+    form = AdvancedSearchForm()
+    state = AppState()
+    
+    # Start editing
+    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    assert form.fields[0].is_editing is True
+    
+    # Type some text
+    form.process_input(MockKeystroke("H"), state, mock_term)
+    form.process_input(MockKeystroke("S"), state, mock_term)
+    form.process_input(MockKeystroke("T"), state, mock_term)
+    assert form.fields[0].value == "HST"
+    
+    # Finish editing
+    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    assert form.fields[0].is_editing is False
+    assert form.fields[0].value == "HST"
+
+
+def test_advanced_form_clear(mock_term):
+    form = AdvancedSearchForm()
+    state = AppState()
+    
+    form.fields[0].value = "HST"
+    form.process_input(MockKeystroke("/"), state, mock_term)
+    assert form.fields[0].value == ""

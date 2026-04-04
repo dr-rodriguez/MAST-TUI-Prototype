@@ -17,7 +17,7 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create `src/mast_tui/ui/form.py` for the new UI component
+- [x] T001 Create `src/mast_tui/ui/form.py` for the new UI component
 
 ---
 
@@ -27,9 +27,9 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T002 Implement `query_criteria` method in `MastClient` in `src/mast_tui/archive.py`
-- [ ] T003 Add `ADVANCED` to `View` enum and `advanced_form` state to `AppState` in `src/mast_tui/main.py`
-- [ ] T004 Define `FormField` dataclass and initial `AdvancedSearchForm` class in `src/mast_tui/ui/form.py`
+- [x] T002 Implement `query_criteria` method in `MastClient` in `src/mast_tui/archive.py`
+- [x] T003 Add `ADVANCED` to `View` enum and `advanced_form` state to `AppState` in `src/mast_tui/main.py`
+- [x] T004 Define `FormField` dataclass and initial `AdvancedSearchForm` class in `src/mast_tui/ui/form.py`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -43,10 +43,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T005 [US1] Handle `/advanced` command in `process_input` to change view state in `src/mast_tui/main.py`
-- [ ] T006 [US1] Implement `draw_advanced_form` helper in `src/mast_tui/ui/layout.py`
-- [ ] T007 [US1] Implement basic list rendering and navigation (Up/Down) in `src/mast_tui/ui/form.py`
-- [ ] T008 [US1] Update `main()` loop to render the advanced form when in `View.ADVANCED` in `src/mast_tui/main.py`
+- [x] T005 [US1] Handle `/advanced` command in `process_input` to change view state in `src/mast_tui/main.py`
+- [x] T006 [US1] Implement `draw_advanced_form` helper in `src/mast_tui/ui/layout.py`
+- [x] T007 [US1] Implement basic list rendering and navigation (Up/Down) in `src/mast_tui/ui/form.py`
+- [x] T008 [US1] Update `main()` loop to render the advanced form when in `View.ADVANCED` in `src/mast_tui/main.py`
 
 **Checkpoint**: User Story 1 complete - navigation and view switching works
 
@@ -60,9 +60,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T009 [US2] Implement "editing mode" state and cursor handling in `src/mast_tui/ui/form.py`
-- [ ] T010 [US2] Capture text input and handle Enter/Tab to commit values in `src/mast_tui/ui/form.py`
-- [ ] T011 [US2] Update field rendering to show current values and editing state in `src/mast_tui/ui/form.py`
+- [x] T009 [US2] Implement "editing mode" state and cursor handling in `src/mast_tui/ui/form.py`
+- [x] T010 [US2] Capture text input and handle Enter/Tab to commit values in `src/mast_tui/ui/form.py`
+- [x] T011 [US2] Update field rendering to show current values and editing state in `src/mast_tui/ui/form.py`
 
 **Checkpoint**: User Story 2 complete - users can now fill out the form
 
@@ -76,10 +76,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T012 [US3] Implement search execution trigger (Ctrl+S) in `src/mast_tui/ui/form.py`
-- [ ] T013 [US3] Create `perform_advanced_search` thread target in `src/mast_tui/main.py`
-- [ ] T014 [US3] Logic to extract filters from form and call `MastClient.query_criteria` in `src/mast_tui/main.py`
-- [ ] T015 [US3] Handle view transition back to `View.MAIN` and clear form on success in `src/mast_tui/main.py`
+- [x] T012 [US3] Implement search execution trigger (Ctrl+S) in `src/mast_tui/ui/form.py`
+- [x] T013 [US3] Create `perform_advanced_search` thread target in `src/mast_tui/main.py`
+- [x] T014 [US3] Logic to extract filters from form and call `MastClient.query_criteria` in `src/mast_tui/main.py`
+- [x] T015 [US3] Handle view transition back to `View.MAIN` and clear form on success in `src/mast_tui/main.py`
 
 **Checkpoint**: User Story 3 complete - full "Advanced Search" cycle works
 
@@ -93,7 +93,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T016 [US4] Add `example_value` attribute to `FormField` and update rendering in `src/mast_tui/ui/form.py`
+- [x] T016 [US4] Add `example_value` attribute to `FormField` and update rendering in `src/mast_tui/ui/form.py`
 
 **Checkpoint**: User Story 4 complete - form is now more user-friendly
 
@@ -103,11 +103,11 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T017 Implement `Esc` to cancel editing or exit the form in `src/mast_tui/ui/form.py`
-- [ ] T018 Implement `/clear` command within the form to reset all fields in `src/mast_tui/ui/form.py`
-- [ ] T019 [P] Add unit tests for `AdvancedSearchForm` in `tests/unit/test_ui_components.py`
-- [ ] T020 [P] Add integration test for `MastClient.query_criteria` in `tests/integration/test_search.py`
-- [ ] T021 Run `quickstart.md` validation to ensure user guide is accurate
+- [x] T017 Implement `Esc` to cancel editing or exit the form in `src/mast_tui/ui/form.py`
+- [x] T018 Implement `/clear` command within the form to reset all fields in `src/mast_tui/ui/form.py`
+- [x] T019 [P] Add unit tests for `AdvancedSearchForm` in `tests/unit/test_ui_components.py`
+- [x] T020 [P] Add integration test for `MastClient.query_criteria` in `tests/integration/test_search.py`
+- [x] T021 Run `quickstart.md` validation to ensure user guide is accurate
 
 ---
 
