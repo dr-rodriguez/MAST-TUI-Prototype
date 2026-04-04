@@ -7,7 +7,7 @@ def draw_title(term: Terminal):
     """Draw the application title at the top left (0,0)."""
     # High-End Editorial Title: Bold, Spaced, Primary Color
     title_text = " M A S T   A R C H I V E"
-    status_text = "" # "Status: Nominal" (not used?)
+    status_text = ""  # "Status: Nominal" (not used?)
 
     # Primary: #8ad0f1 -> rgb(138, 208, 241)
     primary = term.color_rgb(138, 208, 241)
@@ -61,15 +61,13 @@ def draw_prompt(term: Terminal, state):
 
     print(term.move_xy(0, prompt_y) + prompt_display)
     # Position cursor at the end of prompt text
-    print(
-        term.move_xy(visible_prompt_len, prompt_y), end="", flush=True
-    )
+    print(term.move_xy(visible_prompt_len, prompt_y), end="", flush=True)
 
 
 def draw_status_line(term: Terminal, state):
     """Draw the status line at the bottom of the terminal."""
     tertiary = term.color_rgb(166, 205, 218)  # #a6cdda
-    bg_status = term.on_color_rgb(19, 19, 19) # surface-container-lowest
+    bg_status = term.on_color_rgb(19, 19, 19)  # surface-container-lowest
     status_display = state.status_text.ljust(term.width)
     print(
         term.move_xy(0, term.height - 1) + bg_status(tertiary(status_display)),

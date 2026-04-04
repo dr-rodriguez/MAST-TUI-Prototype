@@ -5,6 +5,7 @@ from typing import List
 @dataclass
 class FormField:
     """Represents a single input field in the form."""
+
     label: str
     mast_field_name: str
     example: str = ""
@@ -15,6 +16,7 @@ class FormField:
 
 class AdvancedSearchForm:
     """Manages the advanced search form state and interactions."""
+
     def __init__(self):
         self.fields: List[FormField] = [
             FormField("Mission", "obs_collection", "e.g., HST, JWST"),
@@ -92,7 +94,9 @@ class AdvancedSearchForm:
 
     def _update_scroll(self, term):
         """Adjust scroll offset if focus is out of view."""
-        max_visible = term.height - 7 # Reserve space for title, prompt, headers, status
+        max_visible = (
+            term.height - 7
+        )  # Reserve space for title, prompt, headers, status
         if self.focused_index < self.scroll_offset:
             self.scroll_offset = self.focused_index
         elif self.focused_index >= self.scroll_offset + max_visible:

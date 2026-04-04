@@ -40,8 +40,7 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
 
     if len(table) == 0:
         print(
-            term.move_xy(0, start_y)
-            + term.yellow("No results found for this object.")
+            term.move_xy(0, start_y) + term.yellow("No results found for this object.")
         )
         return
 
@@ -90,8 +89,8 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
 
         # Check if EXCLUSIVE_ACCESS
         is_exclusive = (
-            'data_rights' in headers and
-            str(row['data_rights']).strip() == 'EXCLUSIVE_ACCESS'
+            "data_rights" in headers
+            and str(row["data_rights"]).strip() == "EXCLUSIVE_ACCESS"
         )
         if is_exclusive:
             print(term.move_xy(0, start_y + 2 + i) + secondary_color(visible_row_str))
