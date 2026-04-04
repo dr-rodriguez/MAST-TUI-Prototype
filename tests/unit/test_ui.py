@@ -27,16 +27,24 @@ class TestUI(unittest.TestCase):
     @patch("builtins.print")
     def test_draw_prompt_position(self, mock_print):
         """Verify draw_prompt calls move_xy(0,1)."""
-        draw_prompt(self.term)
+        state = MagicMock()
+        state.prompt_text = "test"
+        draw_prompt(self.term, state)
         self.term.move_xy.assert_any_call(0, 1)
 
     @patch("builtins.print")
     def test_draw_table_position(self, mock_print):
         """Verify draw_table starts at y=3."""
-        draw_table(self.term)
-        self.term.move_xy.assert_any_call(0, 3)  # Header
-        self.term.move_xy.assert_any_call(0, 4)  # Separator
-        self.term.move_xy.assert_any_call(0, 5)  # Row 1
+        state = MagicMock()
+        state.results = MagicMock()
+        state.results.colnames = ["col1"]
+        state.results.__len__.return_value = 1
+        state.results.__getitem__.return_value = ["val1"]
+        state.scroll_x = 0
+        state.scroll_y = 0
+        draw_table(self.term, state)
+        # Table starts at y=3 via TableWidget
+        self.term.move_xy.assert_any_call(0, 3)
 
 
 if __name__ == "__main__":

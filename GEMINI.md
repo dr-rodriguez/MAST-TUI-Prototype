@@ -5,6 +5,8 @@ Auto-generated from all feature plans. Last updated: 2026-04-03
 ## Active Technologies
 - Python 3.12+ + `blessed` (002-interactive-tui-controls)
 - In-memory "Display State Buffer" (002-interactive-tui-controls)
+- Python 3.12+ + `blessed`, `astroquery`, `astropy` (003-mast-search-results)
+- In-memory "Display State Buffer" (storing `astropy.table.Table` objects) (003-mast-search-results)
 
 - **Language**: Python 3.12+
 - **TUI Framework**: `blessed`
@@ -40,6 +42,7 @@ tests/
 - **Readability**: Prioritize explicit logic for scientific peer review.
 
 ## Recent Changes
+- 003-mast-search-results: Added Python 3.12+ + `blessed`, `astroquery`, `astropy`
 - 002-interactive-tui-controls: Added interactive command prompt with gray background, persistent status line, help menu navigation, and system commands (/clear, /exit).
 
 - **001-tui-framework-setup**: Added fundamental TUI framework with `blessed` initialization, title, prompt, and placeholder table.

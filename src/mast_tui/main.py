@@ -1,15 +1,18 @@
 import sys
+import threading
 import time
 from enum import Enum, auto
 
 from blessed import Terminal
 
+from mast_tui.archive import MastClient
 from mast_tui.ui.layout import (
     draw_help,
     draw_prompt,
     draw_status_line,
     draw_table,
     draw_title,
+    draw_welcome,
 )
 
 
@@ -18,14 +21,39 @@ class View(Enum):
     HELP = auto()
 
 
+class TableStatus(Enum):
+    IDLE = auto()
+    SEARCHING = auto()
+    ERROR = auto()
+
+
 class AppState:
     def __init__(self):
         self.view = View.MAIN
         self.prompt_text = ""
-        self.last_main_content = []  # Placeholder for display buffer
+        self.results = None  # astropy.table.Table or None
+        self.scroll_x = 0
+        self.scroll_y = 0
+        self.table_status = TableStatus.IDLE
+        self.error_msg = None
+        self.query_thread = None
         self.status_text = "Press ? to see commands"
         self.last_esc_time = 0
         self.should_exit = False
+
+
+def perform_search(state, object_name):
+    """Target function for the search thread."""
+    client = MastClient()
+    try:
+        results = client.query_observations(object_name)
+        state.results = results
+        state.table_status = TableStatus.IDLE
+        state.scroll_x = 0
+        state.scroll_y = 0
+    except Exception as e:
+        state.table_status = TableStatus.ERROR
+        state.error_msg = str(e)
 
 
 def process_input(val, state, term):
@@ -45,23 +73,72 @@ def process_input(val, state, term):
                 state.prompt_text = ""
                 state.last_esc_time = current_time
         elif val.name == "KEY_BACKSPACE" or val.name == "KEY_DELETE":
+            state.last_esc_time = 0
             state.prompt_text = state.prompt_text[:-1]
+        elif val.name == "KEY_DOWN":
+            state.last_esc_time = 0
+            if state.results:
+                state.scroll_y = min(state.scroll_y + 1, len(state.results) - 1)
+        elif val.name == "KEY_UP":
+            state.last_esc_time = 0
+            if state.results:
+                state.scroll_y = max(0, state.scroll_y - 1)
+        elif val.name == "KEY_RIGHT":
+            state.last_esc_time = 0
+            if state.results:
+                state.scroll_x += 10
+        elif val.name == "KEY_LEFT":
+            state.last_esc_time = 0
+            if state.results:
+                state.scroll_x = max(0, state.scroll_x - 10)
         elif val.name == "KEY_ENTER":
-            command = state.prompt_text.strip().lower()
-            if command in ["/help", "?"]:
+            state.last_esc_time = 0
+            command = state.prompt_text.strip()
+            if not command:
+                return
+
+            if command.lower() in ["/help", "?"]:
                 state.view = View.HELP
                 print(term.clear)
-            elif command == "/exit":
+            elif command.lower() == "/exit":
                 state.should_exit = True
-            elif command == "/clear":
-                state.last_main_content = []
+            elif command.lower() == "/clear":
+                state.results = None
+                state.table_status = TableStatus.IDLE
+                state.scroll_x = 0
+                state.scroll_y = 0
                 print(term.clear)
+            elif command.startswith("/"):
+                # Unknown command
+                state.status_text = f"Unknown command: {command}"
+            else:
+                # Treat as object search
+                if state.table_status != TableStatus.SEARCHING:
+                    state.table_status = TableStatus.SEARCHING
+                    state.results = None
+                    state.error_msg = None
+                    # Clear screen for results
+                    print(term.clear)
+                    state.query_thread = threading.Thread(
+                        target=perform_search, args=(state, command), daemon=True
+                    )
+                    state.query_thread.start()
+
             state.prompt_text = ""
     elif not val.is_sequence:
-        if val == "?":
+        if val == "\x1b":  # ESC key character
+            current_time = time.monotonic()
+            if current_time - state.last_esc_time < 0.5:
+                state.should_exit = True
+            else:
+                state.prompt_text = ""
+                state.last_esc_time = current_time
+        elif val == "?":
+            state.last_esc_time = 0
             state.view = View.HELP
             print(term.clear)
         else:
+            state.last_esc_time = 0
             state.prompt_text += val
 
 
@@ -83,8 +160,19 @@ def main():
 
                 if state.view == View.MAIN:
                     draw_prompt(term, state)
-                    draw_table(term)
-                    state.status_text = "Press ? to see commands"
+                    if state.results is None:
+                        if state.table_status == TableStatus.SEARCHING:
+                            state.status_text = "Searching MAST..."
+                        elif state.table_status == TableStatus.ERROR:
+                            state.status_text = f"Error: {state.error_msg}"
+                        else:
+                            state.status_text = "Press ? to see commands"
+                        draw_welcome(term)
+                    else:
+                        draw_table(term, state)
+                        state.status_text = (
+                            f"Found {len(state.results)} results | Arrows to scroll"
+                        )
                 elif state.view == View.HELP:
                     # US2: Help view rendering
                     # We rely on the clear called during view transition to avoid flicker

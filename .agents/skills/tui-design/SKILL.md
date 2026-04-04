@@ -430,5 +430,3 @@ Before shipping, verify:
 
 ---
 
-For Unicode character reference tables and border style gallery, see [visual-catalog.md](references/visual-catalog.md).
-For real-world TUI app design analysis and inspiration, see [app-patterns.md](references/app-patterns.md).
