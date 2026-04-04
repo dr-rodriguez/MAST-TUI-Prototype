@@ -22,7 +22,8 @@ class MastClient:
         Query MAST for observations based on specific criteria.
 
         Args:
-            **filters: Keyword arguments for query_criteria (e.g., obs_collection='HST').
+            **filters: Keyword arguments for query_criteria
+                (e.g., obs_collection='HST').
 
         Returns:
             An astropy.table.Table of observations.

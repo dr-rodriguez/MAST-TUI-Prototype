@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from astropy.table import Table
 
 from mast_tui.ui.layout import draw_prompt, draw_table, draw_title

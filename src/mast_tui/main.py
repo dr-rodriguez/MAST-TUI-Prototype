@@ -220,12 +220,16 @@ def main():
                         )
                 elif state.view == View.HELP:
                     # US2: Help view rendering
-                    # We rely on the clear called during view transition to avoid flicker
+                    # We rely on the clear called during view transition to
+                    # avoid flicker
                     draw_help(term)
                     state.status_text = "Esc or q to exit menu"
                 elif state.view == View.ADVANCED:
                     draw_advanced_form(term, state)
-                    state.status_text = "Arrows: Navigate | Enter: Edit | Ctrl+S: Search | Esc: Exit"
+                    status_msg = (
+                        "Arrows: Navigate | Enter: Edit | Ctrl+S: Search | Esc: Exit"
+                    )
+                    state.status_text = status_msg
 
                 draw_status_line(term, state)
 

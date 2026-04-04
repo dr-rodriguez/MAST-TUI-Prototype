@@ -1,31 +1,34 @@
 from blessed import Terminal
+
 from mast_tui.ui.table import render_table
 
 
 def draw_title(term: Terminal):
     """Draw the application title at the top left (0,0)."""
-    title_text = "MAST"
-    status_text = "Status: Nominal"
-    
+    # High-End Editorial Title: Bold, Spaced, Primary Color
+    title_text = " M A S T   A R C H I V E"
+    status_text = "" # "Status: Nominal" (not used?)
+
+    # Primary: #8ad0f1 -> rgb(138, 208, 241)
+    primary = term.color_rgb(138, 208, 241)
     # Background: surface-container-lowest (#131313)
     bg_lowest = term.on_color_rgb(19, 19, 19)
     tertiary = term.color_rgb(166, 205, 218)
-    secondary = term.color_rgb(255, 194, 62)
-    
+
     # Title line
-    left_part = term.bold(title_text)
+    left_part = term.bold(primary(title_text))
     right_part = tertiary(status_text)
-    
+
     padding_len = term.width - len(title_text) - len(status_text)
     if padding_len < 0:
         padding_len = 0
-        
+
     full_title_line = left_part + (" " * padding_len) + right_part
     print(term.move_xy(0, 0) + bg_lowest(full_title_line))
-    
-    # Visual hook: 2px bottom border simulated with block characters
+
+    # Visual hook: Primary gradient border instead of gold
     hook_width = int(term.width * 0.20)
-    hook_line = secondary("▀" * hook_width) + bg_lowest("▀" * (term.width - hook_width))
+    hook_line = primary("▀" * hook_width) + bg_lowest("▀" * (term.width - hook_width))
     print(term.move_xy(0, 1) + hook_line)
 
 
@@ -33,23 +36,23 @@ def draw_prompt(term: Terminal, state):
     """Draw the command prompt above the status line."""
     # Move to bottom: term.height - 2
     prompt_y = term.height - 2
-    
+
     # surface-container-high (#2b2b2b) -> rgb(43, 43, 43)
     bg_high = term.on_color_rgb(43, 43, 43)
     # secondary (#ffc23e) -> rgb(255, 194, 62)
     secondary = term.color_rgb(255, 194, 62)
-    
+
     prompt_label = "Command "
     cursor_char = "> "
-    
+
     styled_cursor = secondary(cursor_char)
     styled_label = term.bold(prompt_label) + styled_cursor
-    
+
     # Visible text length (ignoring color codes)
     visible_prompt_len = len(prompt_label) + len(cursor_char) + len(state.prompt_text)
-    
+
     full_prompt = styled_label + state.prompt_text
-    
+
     # Pad to full width
     padding_len = term.width - visible_prompt_len
     if padding_len < 0:

@@ -55,7 +55,7 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
     header_parts = []
     for h, w in zip(headers, widths):
         header_parts.append(f"{str(h):<{w}}")
-    
+
     # 24 spaces padding instead of pipes
     col_separator = " " * 24
     header_line = col_separator.join(header_parts)
@@ -66,7 +66,7 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
     # Slicing the line for horizontal scroll
     visible_header = header_line[scroll_x : scroll_x + viewport_w]
     print(term.move_xy(0, start_y) + header_color(term.bold(visible_header)))
-    
+
     # Empty line instead of solid border to follow the no-line rule
     print(term.move_xy(0, start_y + 1) + " " * len(visible_header))
 
@@ -86,9 +86,13 @@ def render_table(term: Terminal, table, scroll_x: int, scroll_y: int, start_y: i
 
         # Slicing the row string for horizontal scroll
         visible_row_str = row_line[scroll_x : scroll_x + viewport_w]
-        
+
         # Check if EXCLUSIVE_ACCESS
-        if 'data_rights' in headers and str(row['data_rights']).strip() == 'EXCLUSIVE_ACCESS':
+        is_exclusive = (
+            'dataRights' in headers and
+            str(row['dataRights']).strip() == 'EXCLUSIVE_ACCESS'
+        )
+        if is_exclusive:
             print(term.move_xy(0, start_y + 2 + i) + secondary_color(visible_row_str))
         else:
             print(term.move_xy(0, start_y + 2 + i) + visible_row_str)
