@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
+from astropy.table import Table
 
 from mast_tui.ui.layout import draw_prompt, draw_table, draw_title
 
@@ -36,14 +37,11 @@ class TestUI(unittest.TestCase):
     def test_draw_table_position(self, mock_print):
         """Verify draw_table starts at y=3."""
         state = MagicMock()
-        state.results = MagicMock()
-        state.results.colnames = ["col1"]
-        state.results.__len__.return_value = 1
-        state.results.__getitem__.return_value = ["val1"]
+        state.results = Table({'col1': ['val1']})
         state.scroll_x = 0
         state.scroll_y = 0
         draw_table(self.term, state)
-        # Table starts at y=3 via TableWidget
+        # Table starts at y=3 via render_table
         self.term.move_xy.assert_any_call(0, 3)
 
 

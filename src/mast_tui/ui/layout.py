@@ -1,5 +1,5 @@
 from blessed import Terminal
-from mast_tui.ui.table import TableWidget
+from mast_tui.ui.table import render_table
 
 
 def draw_title(term: Terminal):
@@ -41,9 +41,8 @@ def draw_status_line(term: Terminal, state):
 
 def draw_table(term: Terminal, state):
     """Draw the results table."""
-    widget = TableWidget(term)
     # The table viewport starts at y=3 (below title and prompt)
-    widget.render(state.results, state.scroll_x, state.scroll_y, start_y=3)
+    render_table(term, state.results, state.scroll_x, state.scroll_y, start_y=3)
 
 
 def draw_welcome(term: Terminal):
