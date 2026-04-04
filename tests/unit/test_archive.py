@@ -1,9 +1,10 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from mast_tui.archive import MastClient
 
 
 def test_query_observations():
-    """Test that query_observations calls Observations.query_object with correct args."""
+    """Test that query_observations calls correct backend methods."""
     client = MastClient()
     mock_table = MagicMock()
 

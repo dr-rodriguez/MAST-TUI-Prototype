@@ -1,39 +1,76 @@
 from blessed import Terminal
+
 from mast_tui.ui.table import render_table
 
 
 def draw_title(term: Terminal):
     """Draw the application title at the top left (0,0)."""
-    title_text = "MAST Terminal User Interface"
+    # High-End Editorial Title: Bold, Spaced, Primary Color
+    title_text = " M A S T   A R C H I V E"
+    status_text = ""  # "Status: Nominal" (not used?)
 
-    # FR-002, FR-003: black background, blue text
-    print(term.move_xy(0, 0) + term.black_on_blue(title_text))
+    # Primary: #8ad0f1 -> rgb(138, 208, 241)
+    primary = term.color_rgb(138, 208, 241)
+    # Background: surface-container-lowest (#131313)
+    bg_lowest = term.on_color_rgb(19, 19, 19)
+    tertiary = term.color_rgb(166, 205, 218)
+
+    # Title line
+    left_part = term.bold(primary(title_text))
+    right_part = tertiary(status_text)
+
+    padding_len = term.width - len(title_text) - len(status_text)
+    if padding_len < 0:
+        padding_len = 0
+
+    full_title_line = left_part + (" " * padding_len) + right_part
+    print(term.move_xy(0, 0) + bg_lowest(full_title_line))
+
+    # Visual hook: Primary gradient border instead of gold
+    hook_width = int(term.width * 0.20)
+    hook_line = primary("▀" * hook_width) + bg_lowest("▀" * (term.width - hook_width))
+    print(term.move_xy(0, 1) + hook_line)
 
 
 def draw_prompt(term: Terminal, state):
-    """Draw the gray command prompt below the title."""
-    # US1: Implement gray prompt rendering with cursor positioning (T008)
-    prompt_label = "Command: "
-    full_prompt = f"{prompt_label}{state.prompt_text}"
+    """Draw the command prompt above the status line."""
+    # Move to bottom: term.height - 2
+    prompt_y = term.height - 2
 
-    # Fill the line with gray background for the prompt area
-    # UIConfig: prompt_bg is gray (color 8)
-    gray_bg = term.on_color(8)
-    prompt_display = gray_bg(full_prompt.ljust(term.width))
+    # surface-container-high (#2b2b2b) -> rgb(43, 43, 43)
+    bg_high = term.on_color_rgb(43, 43, 43)
+    # secondary (#ffc23e) -> rgb(255, 194, 62)
+    secondary = term.color_rgb(255, 194, 62)
 
-    print(term.move_xy(0, 1) + prompt_display)
+    prompt_label = "Command "
+    cursor_char = "> "
+
+    styled_cursor = secondary(cursor_char)
+    styled_label = term.bold(prompt_label) + styled_cursor
+
+    # Visible text length (ignoring color codes)
+    visible_prompt_len = len(prompt_label) + len(cursor_char) + len(state.prompt_text)
+
+    full_prompt = styled_label + state.prompt_text
+
+    # Pad to full width
+    padding_len = term.width - visible_prompt_len
+    if padding_len < 0:
+        padding_len = 0
+    prompt_display = bg_high(full_prompt + (" " * padding_len))
+
+    print(term.move_xy(0, prompt_y) + prompt_display)
     # Position cursor at the end of prompt text
-    print(
-        term.move_xy(len(prompt_label) + len(state.prompt_text), 1), end="", flush=True
-    )
+    print(term.move_xy(visible_prompt_len, prompt_y), end="", flush=True)
 
 
 def draw_status_line(term: Terminal, state):
     """Draw the status line at the bottom of the terminal."""
-    # T007: Implement status line rendering at term.height - 1 (US1)
+    tertiary = term.color_rgb(166, 205, 218)  # #a6cdda
+    bg_status = term.on_color_rgb(19, 19, 19)  # surface-container-lowest
     status_display = state.status_text.ljust(term.width)
     print(
-        term.move_xy(0, term.height - 1) + term.reverse(status_display),
+        term.move_xy(0, term.height - 1) + bg_status(tertiary(status_display)),
         end="",
         flush=True,
     )
@@ -41,8 +78,8 @@ def draw_status_line(term: Terminal, state):
 
 def draw_table(term: Terminal, state):
     """Draw the results table."""
-    # The table viewport starts at y=3 (below title and prompt)
-    render_table(term, state.results, state.scroll_x, state.scroll_y, start_y=3)
+    # The table viewport starts at y=2 (below title and border)
+    render_table(term, state.results, state.scroll_x, state.scroll_y, start_y=2)
 
 
 def draw_welcome(term: Terminal):
@@ -52,7 +89,7 @@ def draw_welcome(term: Terminal):
         "-------------------------------------------",
         "",
         "To start searching for astronomical observations:",
-        "1. Type an object name in the Command prompt above (e.g., 'M31').",
+        "1. Type an object name in the Command prompt below (e.g., 'M31').",
         "2. Press Enter to perform a basic search.",
         "3. Type /advanced for structured metadata search.",
         "",
@@ -60,7 +97,7 @@ def draw_welcome(term: Terminal):
         "Type /help or ? for more information.",
     ]
 
-    start_y = 4
+    start_y = 3
     for i, line in enumerate(welcome_content):
         print(term.move_xy(0, start_y + i) + line)
 

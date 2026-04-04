@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
+from astropy.table import Table
 
 from mast_tui.main import AppState, View, process_input
-from mast_tui.ui.form import AdvancedSearchForm, FormField
+from mast_tui.ui.form import AdvancedSearchForm
 from mast_tui.ui.layout import draw_prompt, draw_status_line, draw_title
 
 
@@ -68,17 +69,18 @@ def test_process_input_exit(mock_term):
 
 def test_draw_title(mock_term):
     draw_title(mock_term)
-    mock_term.move_xy.assert_called_with(0, 0)
-    mock_term.black_on_blue.assert_called()
+    mock_term.move_xy.assert_called_with(0, 1) # last call is for visual hook
+    mock_term.move_xy.assert_any_call(0, 0)
+    mock_term.on_color_rgb.assert_called()
 
 
 def test_draw_prompt(mock_term):
     state = AppState()
     state.prompt_text = "test"
     draw_prompt(mock_term, state)
-    mock_term.move_xy.assert_any_call(0, 1)
+    mock_term.move_xy.assert_any_call(0, 22)
     # Check that it positions the cursor
-    mock_term.move_xy.assert_any_call(9 + 4, 1)
+    mock_term.move_xy.assert_any_call(14, 22)
 
 
 def test_draw_status_line(mock_term):
@@ -86,7 +88,7 @@ def test_draw_status_line(mock_term):
     state.status_text = "Status Message"
     draw_status_line(mock_term, state)
     mock_term.move_xy.assert_called_with(0, 23)
-    mock_term.reverse.assert_called()
+    mock_term.on_color_rgb.assert_called()
 
 
 def test_advanced_form_init():
@@ -99,15 +101,17 @@ def test_advanced_form_init():
 def test_advanced_form_navigation(mock_term):
     form = AdvancedSearchForm()
     state = AppState()
-    
+
     # Move down
-    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_DOWN"), state, mock_term)
+    key_down = MockKeystroke("", is_sequence=True, name="KEY_DOWN")
+    form.process_input(key_down, state, mock_term)
     assert form.focused_index == 1
     assert form.fields[0].is_focused is False
     assert form.fields[1].is_focused is True
-    
+
     # Move up (back to 0)
-    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_UP"), state, mock_term)
+    key_up = MockKeystroke("", is_sequence=True, name="KEY_UP")
+    form.process_input(key_up, state, mock_term)
     assert form.focused_index == 0
     assert form.fields[0].is_focused is True
 
@@ -115,27 +119,48 @@ def test_advanced_form_navigation(mock_term):
 def test_advanced_form_editing(mock_term):
     form = AdvancedSearchForm()
     state = AppState()
-    
+
     # Start editing
-    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    key_enter = MockKeystroke("", is_sequence=True, name="KEY_ENTER")
+    form.process_input(key_enter, state, mock_term)
     assert form.fields[0].is_editing is True
-    
+
     # Type some text
     form.process_input(MockKeystroke("H"), state, mock_term)
     form.process_input(MockKeystroke("S"), state, mock_term)
     form.process_input(MockKeystroke("T"), state, mock_term)
     assert form.fields[0].value == "HST"
-    
+
     # Finish editing
-    form.process_input(MockKeystroke("", is_sequence=True, name="KEY_ENTER"), state, mock_term)
+    form.process_input(key_enter, state, mock_term)
     assert form.fields[0].is_editing is False
     assert form.fields[0].value == "HST"
+
+
+def test_process_input_scroll_limit(mock_term):
+    state = AppState()
+    # Mocking a table with 100 rows
+    state.results = Table({'col1': list(range(100))})
+    
+    # term.height is 24
+    # max_rows = 24 - 6 = 18
+    # max_scroll_y = 100 - 18 = 82
+    state.scroll_y = 81
+    
+    # Scroll down once
+    val_down = MockKeystroke("", is_sequence=True, name="KEY_DOWN")
+    process_input(val_down, state, mock_term)
+    assert state.scroll_y == 82
+    
+    # Scroll down again - should be limited to 82
+    process_input(val_down, state, mock_term)
+    assert state.scroll_y == 82
 
 
 def test_advanced_form_clear(mock_term):
     form = AdvancedSearchForm()
     state = AppState()
-    
+
     form.fields[0].value = "HST"
     form.process_input(MockKeystroke("/"), state, mock_term)
     assert form.fields[0].value == ""

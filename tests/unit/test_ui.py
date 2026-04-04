@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from astropy.table import Table
 
 from mast_tui.ui.layout import draw_prompt, draw_table, draw_title
@@ -10,6 +11,8 @@ class TestUI(unittest.TestCase):
 
     def setUp(self):
         self.term = MagicMock()
+        self.term.width = 80
+        self.term.height = 24
         # Mock move_xy to return a distinguishable string
         self.term.move_xy.side_effect = lambda x, y: f"MOVE({x},{y})"
         # Mock black_on_blue to return its input
@@ -22,27 +25,43 @@ class TestUI(unittest.TestCase):
         """Verify draw_title calls move_xy(0,0)."""
         draw_title(self.term)
         self.term.move_xy.assert_any_call(0, 0)
-        # Verify it uses blue on black
-        self.term.black_on_blue.assert_called()
+        # Verify it uses on_color_rgb
+        self.term.on_color_rgb.assert_called()
 
     @patch("builtins.print")
     def test_draw_prompt_position(self, mock_print):
-        """Verify draw_prompt calls move_xy(0,1)."""
+        """Verify draw_prompt calls move_xy(0,22)."""
         state = MagicMock()
         state.prompt_text = "test"
         draw_prompt(self.term, state)
-        self.term.move_xy.assert_any_call(0, 1)
+        self.term.move_xy.assert_any_call(0, 22)
 
     @patch("builtins.print")
     def test_draw_table_position(self, mock_print):
-        """Verify draw_table starts at y=3."""
+        """Verify draw_table starts at y=2."""
         state = MagicMock()
         state.results = Table({'col1': ['val1']})
         state.scroll_x = 0
         state.scroll_y = 0
         draw_table(self.term, state)
-        # Table starts at y=3 via render_table
-        self.term.move_xy.assert_any_call(0, 3)
+        # Table starts at y=2 via render_table
+        self.term.move_xy.assert_any_call(0, 2)
+
+    @patch("builtins.print")
+    def test_render_table_end_marker(self, mock_print):
+        """Verify that a horizontal line is shown at the end of the table."""
+        # viewport_h = 24 - 2 - 2 = 20
+        # max_rows = 20 - 2 = 18
+        state = MagicMock()
+        state.results = Table({'col1': list(range(10))}) # 10 rows
+        state.scroll_x = 0
+        state.scroll_y = 0
+        draw_table(self.term, state)
+        
+        # End of table line should be at y = start_y + 2 + num_rows = 2 + 2 + 10 = 14
+        self.term.move_xy.assert_any_call(0, 14)
+        # It should also clear remaining rows up to y=21 (start_y + viewport_h - 1 = 2 + 20 - 1)
+        self.term.move_xy.assert_any_call(0, 21)
 
 
 if __name__ == "__main__":

@@ -119,7 +119,12 @@ def process_input(val, state, term):
         elif val.name == "KEY_DOWN":
             state.last_esc_time = 0
             if state.results:
-                state.scroll_y = min(state.scroll_y + 1, len(state.results) - 1)
+                # Calculate max_rows like in render_table:
+                # start_y=2, viewport_h = term.height - start_y - 2 = term.height - 4
+                # max_rows = viewport_h - 2 = term.height - 6
+                max_rows = term.height - 6
+                max_scroll_y = max(0, len(state.results) - max_rows)
+                state.scroll_y = min(state.scroll_y + 1, max_scroll_y)
         elif val.name == "KEY_UP":
             state.last_esc_time = 0
             if state.results:
@@ -220,12 +225,16 @@ def main():
                         )
                 elif state.view == View.HELP:
                     # US2: Help view rendering
-                    # We rely on the clear called during view transition to avoid flicker
+                    # We rely on the clear called during view transition to
+                    # avoid flicker
                     draw_help(term)
                     state.status_text = "Esc or q to exit menu"
                 elif state.view == View.ADVANCED:
                     draw_advanced_form(term, state)
-                    state.status_text = "Arrows: Navigate | Enter: Edit | Ctrl+S: Search | Esc: Exit"
+                    status_msg = (
+                        "Arrows: Navigate | Enter: Edit | Ctrl+S: Search | Esc: Exit"
+                    )
+                    state.status_text = status_msg
 
                 draw_status_line(term, state)
 

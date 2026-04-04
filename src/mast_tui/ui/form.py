@@ -1,9 +1,11 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
+
 
 @dataclass
 class FormField:
     """Represents a single input field in the form."""
+
     label: str
     mast_field_name: str
     example: str = ""
@@ -14,6 +16,7 @@ class FormField:
 
 class AdvancedSearchForm:
     """Manages the advanced search form state and interactions."""
+
     def __init__(self):
         self.fields: List[FormField] = [
             FormField("Mission", "obs_collection", "e.g., HST, JWST"),
@@ -58,7 +61,7 @@ class AdvancedSearchForm:
         if val and ord(val[0]) == 19:
             # Trigger search
             return "SEARCH"
-            
+
         # Check for / to clear form
         if val == "/":
             for f in self.fields:
@@ -86,12 +89,14 @@ class AdvancedSearchForm:
                 return "EXIT"
         elif val == "\x1b":  # ESC character if not caught as sequence
             return "EXIT"
-            
+
         return None
 
     def _update_scroll(self, term):
         """Adjust scroll offset if focus is out of view."""
-        max_visible = term.height - 7 # Reserve space for title, prompt, headers, status
+        max_visible = (
+            term.height - 7
+        )  # Reserve space for title, prompt, headers, status
         if self.focused_index < self.scroll_offset:
             self.scroll_offset = self.focused_index
         elif self.focused_index >= self.scroll_offset + max_visible:
@@ -100,40 +105,49 @@ class AdvancedSearchForm:
     def render(self, term):
         """Render the form to the terminal."""
         start_y = 3
-        print(term.move_xy(0, start_y) + term.bold("Advanced Search (MAST Observations.query_criteria)"))
+        title = "Advanced Search (MAST Observations.query_criteria)"
+        print(term.move_xy(0, start_y) + term.bold(title))
         print(term.move_xy(0, start_y + 1) + "-" * term.width)
 
         max_visible = term.height - 7
-        visible_fields = self.fields[self.scroll_offset : self.scroll_offset + max_visible]
+        end_idx = self.scroll_offset + max_visible
+        visible_fields = self.fields[self.scroll_offset : end_idx]
 
         for i, field in enumerate(visible_fields):
             y = start_y + 3 + i
             label_text = f"{field.label:15}: "
-            
+
             if field.is_editing:
                 value_text = field.value + term.reverse(" ")
             else:
                 value_text = field.value if field.value else "[Empty]"
-            
+
             example_text = term.italic(term.color(8)(f" ({field.example})"))
             line = f"{label_text} {value_text}"
-            
+
             if field.is_focused:
                 if field.is_editing:
-                    print(term.move_xy(0, y) + term.black_on_yellow(line.ljust(term.width)))
-                    print(term.move_xy(len(label_text) + len(field.value) + 2, y) + example_text)
+                    bg = term.black_on_yellow(line.ljust(term.width))
+                    print(term.move_xy(0, y) + bg)
+                    x_pos = len(label_text) + len(field.value) + 2
+                    print(term.move_xy(x_pos, y) + example_text)
                 else:
-                    print(term.move_xy(0, y) + term.black_on_cyan(line.ljust(term.width)))
-                    print(term.move_xy(len(label_text) + len(value_text) + 1, y) + example_text)
+                    bg = term.black_on_cyan(line.ljust(term.width))
+                    print(term.move_xy(0, y) + bg)
+                    x_pos = len(label_text) + len(value_text) + 1
+                    print(term.move_xy(x_pos, y) + example_text)
             else:
-                print(term.move_xy(0, y) + line + example_text + " " * (term.width - len(line) - len(field.example) - 3))
+                padding_len = term.width - len(line) - len(field.example) - 3
+                padding = " " * padding_len
+                print(term.move_xy(0, y) + line + example_text + padding)
 
         # Show indicator if more fields are available
         if self.scroll_offset > 0:
             print(term.move_xy(term.width - 5, start_y + 2) + term.bold("^ More"))
         if self.scroll_offset + max_visible < len(self.fields):
-            print(term.move_xy(term.width - 5, start_y + 3 + max_visible) + term.bold("v More"))
-                
+            y_pos = start_y + 3 + max_visible
+            print(term.move_xy(term.width - 5, y_pos) + term.bold("v More"))
+
     def get_filters(self):
         """Return a dictionary of the current form values."""
         return {f.mast_field_name: f.value for f in self.fields if f.value}
