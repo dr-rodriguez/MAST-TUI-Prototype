@@ -73,20 +73,26 @@ def process_input(val, state, term):
                 state.prompt_text = ""
                 state.last_esc_time = current_time
         elif val.name == "KEY_BACKSPACE" or val.name == "KEY_DELETE":
+            state.last_esc_time = 0
             state.prompt_text = state.prompt_text[:-1]
         elif val.name == "KEY_DOWN":
+            state.last_esc_time = 0
             if state.results:
                 state.scroll_y = min(state.scroll_y + 1, len(state.results) - 1)
         elif val.name == "KEY_UP":
+            state.last_esc_time = 0
             if state.results:
                 state.scroll_y = max(0, state.scroll_y - 1)
         elif val.name == "KEY_RIGHT":
+            state.last_esc_time = 0
             if state.results:
                 state.scroll_x += 10
         elif val.name == "KEY_LEFT":
+            state.last_esc_time = 0
             if state.results:
                 state.scroll_x = max(0, state.scroll_x - 10)
         elif val.name == "KEY_ENTER":
+            state.last_esc_time = 0
             command = state.prompt_text.strip()
             if not command:
                 return
@@ -128,9 +134,11 @@ def process_input(val, state, term):
                 state.prompt_text = ""
                 state.last_esc_time = current_time
         elif val == "?":
+            state.last_esc_time = 0
             state.view = View.HELP
             print(term.clear)
         else:
+            state.last_esc_time = 0
             state.prompt_text += val
 
 

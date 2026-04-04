@@ -64,16 +64,16 @@ def test_double_esc_exit():
     """Test that double Esc exits the application."""
     state = AppState()
     term = MagicMock()
-    
+
     # Mock val for KEY_ESCAPE
     val = MagicMock()
     val.is_sequence = True
     val.name = "KEY_ESCAPE"
-    
+
     # First Esc
     process_input(val, state, term)
     assert state.should_exit is False
-    
+
     # Second Esc within 0.5s
     process_input(val, state, term)
     assert state.should_exit is True
@@ -83,21 +83,23 @@ def test_double_esc_char_exit():
     """Test that double \x1b character exits the application."""
     state = AppState()
     term = MagicMock()
-    
+
     # Mock val for \x1b char
     val = MagicMock()
     val.is_sequence = False
     val.__eq__.return_value = False
     val.__str__.return_value = "\x1b"
+
     # To handle 'if val == "\x1b"'
     def side_effect(other):
         return other == "\x1b"
+
     val.__eq__.side_effect = side_effect
-    
+
     # First Esc
     process_input(val, state, term)
     assert state.should_exit is False
-    
+
     # Second Esc within 0.5s
     process_input(val, state, term)
     assert state.should_exit is True

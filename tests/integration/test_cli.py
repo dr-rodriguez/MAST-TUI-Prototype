@@ -55,7 +55,7 @@ class TestCLI(unittest.TestCase):
         mock_other_key.is_sequence = False
         mock_other_key.__bool__.return_value = True
 
-        # Sequence: ESC, 'a', ESC, ESC (the last one should trigger the break)
+        # Sequence: ESC, 'a', ESC, ESC (the last two should trigger the break)
         mock_term.inkey.side_effect = [
             mock_escape_key,
             mock_other_key,
@@ -65,7 +65,7 @@ class TestCLI(unittest.TestCase):
 
         main()
 
-        # Should have called inkey 4 times
+        # Should have called inkey 4 times (last one triggered exit)
         self.assertEqual(mock_term.inkey.call_count, 4)
 
 
