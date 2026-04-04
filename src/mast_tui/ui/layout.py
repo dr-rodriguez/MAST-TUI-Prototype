@@ -53,7 +53,8 @@ def draw_welcome(term: Terminal):
         "",
         "To start searching for astronomical observations:",
         "1. Type an object name in the Command prompt above (e.g., 'M31').",
-        "2. Press Enter to perform the search.",
+        "2. Press Enter to perform a basic search.",
+        "3. Type /advanced for structured metadata search.",
         "",
         "Use arrow keys to navigate results once they appear.",
         "Type /help or ? for more information.",
@@ -70,6 +71,7 @@ def draw_help(term: Terminal):
         "MAST TUI Help Menu",
         "------------------",
         "Commands:",
+        "  /advanced   - Open structured advanced search form",
         "  /help, ?    - Show this help menu",
         "  /clear      - Clear the main display",
         "  /exit       - Exit the application",
@@ -85,3 +87,9 @@ def draw_help(term: Terminal):
     start_y = 3
     for i, line in enumerate(help_content):
         print(term.move_xy(0, start_y + i) + line)
+
+
+def draw_advanced_form(term: Terminal, state):
+    """Draw the advanced search form."""
+    if state.advanced_form:
+        state.advanced_form.render(term)
